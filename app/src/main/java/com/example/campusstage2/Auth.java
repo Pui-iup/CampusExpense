@@ -49,36 +49,40 @@ public class Auth {
         editor.apply();
     }
 
-    public boolean isAccountLocked() {
-        long lockoutEndTime = sharedPreferences.getLong("lockout_end_time", 0);
+    private String getPrefKey(String key, String username) {
+        return username + "_" + key;
+    }
+
+    public boolean isAccountLocked(String username) {
+        long lockoutEndTime = sharedPreferences.getLong(getPrefKey("lockout_end_time", username), 0);
         return lockoutEndTime > System.currentTimeMillis();
     }
 
-    public long getLockoutEndTime() {
-        return sharedPreferences.getLong("lockout_end_time", 0);
+    public long getLockoutEndTime(String username) {
+        return sharedPreferences.getLong(getPrefKey("lockout_end_time", username), 0);
     }
 
-    public void resetLoginAttempts() {
-        editor.putInt("login_attempts", 0);
+    public void resetLoginAttempts(String username) {
+        editor.putInt(getPrefKey("login_attempts", username), 0);
         editor.apply();
     }
 
-    public int incrementLoginAttempts() {
-        int loginAttempts = sharedPreferences.getInt("login_attempts", 0) + 1;
-        editor.putInt("login_attempts", loginAttempts);
+    public int incrementLoginAttempts(String username) {
+        int loginAttempts = sharedPreferences.getInt(getPrefKey("login_attempts", username), 0) + 1;
+        editor.putInt(getPrefKey("login_attempts", username), loginAttempts);
         editor.apply();
         return loginAttempts;
     }
 
-    public void lockAccount() {
+    public void lockAccount(String username) {
         long lockoutEndTime = System.currentTimeMillis() + LOCKOUT_DURATION;
-        editor.putLong("lockout_end_time", lockoutEndTime);
+        editor.putLong(getPrefKey("lockout_end_time", username), lockoutEndTime);
         editor.apply();
     }
 
     public boolean login(String username, String password) {
-        if (isAccountLocked()) {
-            long lockoutEndTime = sharedPreferences.getLong("lockout_end_time", 0);
+        if (isAccountLocked(username)) {
+            long lockoutEndTime = getLockoutEndTime(username);
             long remainingTime = (lockoutEndTime - System.currentTimeMillis()) / 1000;
             System.out.println("Account is locked. Try again in " + remainingTime + " seconds.");
             return false;
@@ -88,13 +92,13 @@ public class Auth {
         boolean isLoginSuccessful = checkCredentials(username, password);
 
         if (isLoginSuccessful) {
-            resetLoginAttempts();
+            resetLoginAttempts(username);
             return true;
         } else {
-            int loginAttempts = incrementLoginAttempts();
+            int loginAttempts = incrementLoginAttempts(username);
 
             if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
-                lockAccount();
+                lockAccount(username);
                 System.out.println("Account locked due to too many failed login attempts. Try again later.");
             }
             return false;

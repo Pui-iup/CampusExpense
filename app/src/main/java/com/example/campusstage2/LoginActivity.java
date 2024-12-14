@@ -43,8 +43,8 @@ public class LoginActivity extends AppCompatActivity {
                 String inputUsername = usernameInput.getText().toString();
                 String inputPassword = passwordInput.getText().toString();
 
-                if (auth.isAccountLocked()) {
-                    long lockoutEndTime = auth.getLockoutEndTime();
+                if (auth.isAccountLocked(inputUsername)) {
+                    long lockoutEndTime = auth.getLockoutEndTime(inputUsername);
                     long remainingTime = (lockoutEndTime - System.currentTimeMillis()) / 1000;
                     Toast.makeText(getBaseContext(), "Account is locked. Try again in " + remainingTime + " seconds.", Toast.LENGTH_LONG).show();
                     return;
@@ -59,14 +59,14 @@ public class LoginActivity extends AppCompatActivity {
                     @SuppressLint("Range") String email = cursor.getString(cursor.getColumnIndex("email"));
                     @SuppressLint("Range") String username = cursor.getString(cursor.getColumnIndex("username"));
                     auth.saveUser(id, name, phone, email, username);
-                    auth.resetLoginAttempts();
+                    auth.resetLoginAttempts(inputUsername);
                     Intent intent = new Intent(v.getContext(), MainActivity.class);
                     v.getContext().startActivity(intent);
                     finish();
                 } else {
-                    int loginAttempts = auth.incrementLoginAttempts();
+                    int loginAttempts = auth.incrementLoginAttempts(inputUsername);
                     if (loginAttempts >= Auth.MAX_LOGIN_ATTEMPTS) {
-                        auth.lockAccount();
+                        auth.lockAccount(inputUsername);
                         Toast.makeText(getBaseContext(), "Account locked due to too many failed login attempts. Try again later.", Toast.LENGTH_LONG).show();
                     } else {
                         Toast.makeText(getBaseContext(), "Invalid username/password. Attempts left: " + (Auth.MAX_LOGIN_ATTEMPTS - loginAttempts), Toast.LENGTH_LONG).show();
