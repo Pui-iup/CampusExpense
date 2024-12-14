@@ -16,7 +16,7 @@
             android:id="@+id/userImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/user_icon"
+            android:src="@drawable/User_icon"
             android:layout_marginBottom="16dp"
             android:scaleType="centerCrop"
             android:contentDescription="User Image" />
@@ -27,6 +27,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Name: "
+            android:textColor="@color/xanhduong"
             android:textStyle="bold"
             android:textSize="20sp"
             android:layout_marginBottom="8dp" />
@@ -37,6 +38,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Username: "
+            android:textStyle="bold"
+            android:textColor="@color/xanhduong"
             android:textSize="16sp"
             android:layout_marginBottom="8dp" />
 
@@ -46,6 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email: "
+            android:textStyle="bold"
+            android:textColor="@color/xanhduong"
             android:textSize="16sp"
             android:layout_marginBottom="8dp" />
 
@@ -56,20 +61,25 @@
             android:layout_height="wrap_content"
             android:text="Phone: "
             android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/xanhduong"
             android:layout_marginBottom="16dp" />
 
         <!-- Nút Logout -->
         <Button
             android:id="@+id/logoutButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Logout"
+            android:backgroundTint="@color/xanh"
+            android:layout_gravity="center"
             android:layout_marginBottom="8dp" />
 
         <!-- Nút Recurring Expense -->
         <Button
             android:id="@+id/recurringExpenseButton"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
+            android:backgroundTint="@color/xanh"
             android:layout_height="wrap_content"
             android:text="Recurring Expense" />
     </LinearLayout>

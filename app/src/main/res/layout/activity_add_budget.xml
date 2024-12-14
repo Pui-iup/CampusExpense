@@ -10,7 +10,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"    >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -22,8 +22,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="Add Budget"
-                android:textSize="34sp" />
+                android:text="ADD BUDGET"
+                android:textSize="34sp"
+                android:textColor="@color/xanhduong"
+                android:textStyle="bold"/>
 
             <View
                 android:id="@+id/divider2"
@@ -37,13 +39,16 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="Amount"
-                android:textSize="20sp" />
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/xanhduong"/>
 
             <EditText
                 android:id="@+id/amount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:ems="10"
                 android:hint="Enter an amount"
                 android:inputType="number" />
@@ -52,14 +57,17 @@
                 android:id="@+id/textView13"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:text="Category"
                 android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/selectCategory"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:text="Choose Category"
                 android:textSize="24sp" />
 
@@ -71,6 +79,7 @@
                 android:focusable="true"
                 android:focusableInTouchMode="true"
                 android:text="Start"
+                android:textStyle="bold"
                 android:textSize="20sp" />
 
             <EditText
@@ -78,6 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
                 android:ems="10"
                 android:inputType="date"
                 tools:text="@tools:sample/date/ddmmyy" />
@@ -88,6 +98,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="End"
+                android:textStyle="bold"
                 android:textSize="20sp" />
 
             <EditText
@@ -96,6 +107,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:ems="10"
+                android:layout_marginLeft="10dp"
                 android:inputType="date" />
 
             <Button

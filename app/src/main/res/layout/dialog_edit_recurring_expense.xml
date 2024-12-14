@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
-    android:background="#f9f9f9">
+    android:background="#f9f9f9"
+    android:layout_marginTop="50dp">
 
     <EditText
         android:id="@+id/amount"
@@ -15,6 +16,7 @@
         android:padding="12dp"
         android:backgroundTint="#FF6200EE"
         android:inputType="numberDecimal"
+
         android:textSize="16sp"
         android:layout_marginBottom="12dp" />
 
@@ -48,9 +50,11 @@
 
     <TextView
         android:id="@+id/selectCategory"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Category"
+        android:layout_gravity="center"
+        android:textStyle="bold"
         android:textSize="18sp"
         android:padding="8dp"
         android:textColor="#FF6200EE"

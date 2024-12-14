@@ -17,6 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:textColor="@color/xanhduong"
             android:text="Amount: $0"
             android:textSize="16sp"
             android:textStyle="bold" />
@@ -33,26 +34,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Remaining: $0"
+        android:textColor="@color/xanhduong"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/categoryTextView"
         android:layout_width="wrap_content"
+        android:textStyle="bold"
         android:layout_height="wrap_content"
         android:text="Category: Unknown"
+        android:textColor="@color/xanhduong"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/startDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="@color/xanhduong"
+        android:textStyle="bold"
         android:text="Start Date: 01/01/2024"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/endDateTextView"
         android:layout_width="wrap_content"
+        android:textColor="@color/xanhduong"
+        android:textStyle="bold"
         android:layout_height="wrap_content"
         android:text="End Date: 31/12/2024"
         android:textSize="14sp" />

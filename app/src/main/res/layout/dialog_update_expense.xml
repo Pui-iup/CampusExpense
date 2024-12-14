@@ -7,10 +7,11 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Update Expense"
+        android:text="UPDATE EXPENSE"
         android:textSize="20sp"
         android:textStyle="bold"
         android:gravity="center"
+        android:textColor="@color/xanhduong"
         android:layout_marginBottom="10dp" />
     <EditText
         android:id="@+id/editAmount"
@@ -31,8 +32,10 @@
         android:inputType="date" />
     <Button
         android:id="@+id/updateExpenseButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:backgroundTint="@color/xanh"
+        android:layout_gravity="center"
         android:layout_marginTop="10dp"
         android:text="Update" />
 </LinearLayout>

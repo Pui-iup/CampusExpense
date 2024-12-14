@@ -12,12 +12,13 @@
         android:id="@+id/amount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Amount"
-        android:padding="12dp"
+        android:layout_marginBottom="12dp"
         android:backgroundTint="#FF6200EE"
+        android:hint="Amount"
         android:inputType="numberDecimal"
-        android:textSize="16sp"
-        android:layout_marginBottom="12dp" />
+        android:padding="12dp"
+        android:textColorHint="@color/xanhduong"
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/startDate"
@@ -25,6 +26,7 @@
         android:layout_height="wrap_content"
         android:hint="Start Date"
         android:padding="12dp"
+        android:textColorHint="@color/xanhduong"
         android:backgroundTint="#FF6200EE"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -37,6 +39,7 @@
         android:layout_height="wrap_content"
         android:hint="End Date"
         android:padding="12dp"
+        android:textColorHint="@color/xanhduong"
         android:backgroundTint="#FF6200EE"
         android:focusable="true"
         android:focusableInTouchMode="true"
@@ -45,12 +48,14 @@
 
     <TextView
         android:id="@+id/selectCategory"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Select Category"
+        android:textStyle="bold"
         android:textSize="18sp"
         android:padding="8dp"
-        android:textColor="#FF6200EE"
+        android:textColor="@color/xanhduong"
+        android:layout_gravity="center"
         android:layout_marginBottom="8dp" />
 
     <Spinner
@@ -71,15 +76,17 @@
         android:inputType="textMultiLine"
         android:lines="4"
         android:gravity="start|top"
+        android:textColorHint="@color/xanhduong"
         android:textSize="16sp"
         android:layout_marginBottom="16dp" />
 
     <Button
         android:id="@+id/saveRecurringExpenseButton"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Save"
-        android:backgroundTint="#FF6200EE"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/xanh"
         android:textColor="#FFFFFF"
         android:padding="12dp"
         android:textSize="18sp" />

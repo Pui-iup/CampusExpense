@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Add Recurring Transaction"
+        android:backgroundTint="@color/xanh"
         android:layout_marginTop="16dp" />
 
 </LinearLayout>

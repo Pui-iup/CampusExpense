@@ -13,6 +13,7 @@
 
         <TextView
             android:id="@+id/amountTextView"
+            android:textColor="@color/xanhduong"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -32,11 +33,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Category: Unknown"
+        android:textColor="@color/xanhduong"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/dateTextView"
         android:layout_width="wrap_content"
+        android:textColor="@color/xanhduong"
         android:layout_height="wrap_content"
         android:text="Date: 01/01/2024"
         android:textSize="14sp" />
