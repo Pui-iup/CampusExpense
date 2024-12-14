@@ -22,12 +22,6 @@
             android:name=".AddRecurringExpense"
             android:exported="false" />
         <activity
-            android:name=".AddRecurringExpenseActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RecurringExpenseFragment"
-            android:exported="false" />
-        <activity
             android:name=".AddBudgetActivity"
             android:exported="false" />
         <activity

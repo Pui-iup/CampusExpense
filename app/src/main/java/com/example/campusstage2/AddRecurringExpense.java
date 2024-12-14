@@ -77,11 +77,11 @@ public class AddRecurringExpense extends AppCompatActivity {
             String amountString = amountEditText.getText().toString().trim();
             String startDateString = startDateEditText.getText().toString().trim();
             String endDateString = endDateEditText.getText().toString().trim();
-            String repeatedChoice = repeatedChoiceSpinner.getSelectedItem().toString();
+            String repeatedChoice = repeatedChoiceSpinner.getSelectedItem().toString().toLowerCase();
 
             // Kiểm tra tính hợp lệ của dữ liệu
-            if (repeatedChoice.isEmpty() || repeatedChoice.equals("Please select")) {
-                Toast.makeText(this, "Please select a repeat choice", Toast.LENGTH_SHORT).show();
+            if (repeatedChoice.isEmpty() || !(repeatedChoice.equals("daily") || repeatedChoice.equals("weekly") || repeatedChoice.equals("monthly") || repeatedChoice.equals("yearly"))) {
+                Toast.makeText(this, "Please select a valid repeat choice", Toast.LENGTH_SHORT).show();
                 return;
             }
             if (amountString.isEmpty() || startDateString.isEmpty() || selectedCategory == null) {

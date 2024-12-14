@@ -117,6 +117,7 @@ public class RecurringExpense {
     }
 
     public int updateRecurringExpense(RecurringExpense recurringExpense) {
+
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("category_id", recurringExpense.getCategoryId());

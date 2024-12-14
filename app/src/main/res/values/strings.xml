@@ -9,10 +9,10 @@
     <string name="previous">Previous</string>
     <string-array name="repeated_choices">
         <item>Please select</item>
-        <item>daily</item>
-        <item>weekly</item>
-        <item>monthly</item>
-        <item>yearly</item>
+        <item>Daily</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+        <item>Yearly</item>
     </string-array>
 
     <string name="lorem_ipsum">

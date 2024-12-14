@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.campusstage2.Auth;
 import com.example.campusstage2.LoginActivity;
@@ -25,6 +26,8 @@ public class AccountFragment extends Fragment {
     private Button logoutButton, recurringExpenseButton;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private TextView nameTextView, usernameTextView, emailTextView, phoneTextView;
+    private Auth auth;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -34,6 +37,9 @@ public class AccountFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static AccountFragment newInstance() {
+        return new AccountFragment();
+    }
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -69,7 +75,13 @@ public class AccountFragment extends Fragment {
 
         logoutButton = view.findViewById(R.id.logoutButton);
         recurringExpenseButton = view.findViewById(R.id.recurringExpenseButton);
+        nameTextView = view.findViewById(R.id.userNameTextView);
+        usernameTextView = view.findViewById(R.id.userUsernameTextView);
+        emailTextView = view.findViewById(R.id.userEmailTextView);
+        phoneTextView = view.findViewById(R.id.userPhoneTextView);
 
+        auth = new Auth(getContext());
+        setUserInfo();
         // Set up logout button
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,5 +103,11 @@ public class AccountFragment extends Fragment {
         });
 
         return view;
+    }
+    private void setUserInfo() {
+        nameTextView.setText("Name: " + auth.getName());
+        usernameTextView.setText("Username: " + auth.getUsername());
+        emailTextView.setText("Email: " + auth.getEmail());
+        phoneTextView.setText("Phone: " + auth.getPhone());
     }
 }
