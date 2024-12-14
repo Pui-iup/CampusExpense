@@ -16,7 +16,7 @@
             android:id="@+id/userImageView"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:src="@drawable/User_icon"
+            android:src="@drawable/user_icon"
             android:layout_marginBottom="16dp"
             android:scaleType="centerCrop"
             android:contentDescription="User Image" />

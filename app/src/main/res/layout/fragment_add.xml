@@ -21,6 +21,7 @@
             android:layout_gravity="center"
             android:textColor="@color/xanhduong"
             android:text="ADD AN EXPENSE"
+            android:textStyle="bold"
             android:textSize="34sp" />
 
         <View

@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:text="Report this month"
             android:textStyle="bold"
+            android:textColor="@color/xanhduong"
             android:textSize="34sp"
             android:layout_gravity="center"/>
 
