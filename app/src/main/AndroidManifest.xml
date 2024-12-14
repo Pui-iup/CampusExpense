@@ -16,6 +16,9 @@
         android:theme="@style/Theme.CampusStage2"
         tools:targetApi="32">
         <activity
+            android:name=".TestActivity"
+            android:exported="false" />
+        <activity
             android:name=".RecurringExpenseActivity"
             android:exported="false" />
         <activity

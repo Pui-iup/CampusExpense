@@ -68,17 +68,6 @@
         android:layout_marginBottom="12dp"
         android:entries="@array/repeated_choices" />
 
-    <EditText
-        android:id="@+id/note"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Note"
-        android:padding="12dp"
-        android:backgroundTint="#FF6200EE"
-        android:inputType="textMultiLine"
-        android:lines="4"
-        android:gravity="start|top"
-        android:textSize="16sp"
-        android:layout_marginBottom="16dp" />
+
 
 </LinearLayout>

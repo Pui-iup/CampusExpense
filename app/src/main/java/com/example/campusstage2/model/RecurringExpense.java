@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import androidx.work.Data;
 import androidx.work.OneTimeWorkRequest;
 import androidx.work.WorkManager;
@@ -82,12 +84,15 @@ public class RecurringExpense {
         values.put("amount", recurringExpense.getAmount());
         values.put("start_date", recurringExpense.getStartDate().format(dateFormatter));
         values.put("end_date", recurringExpense.getEndDate() != null ? recurringExpense.getEndDate().format(dateFormatter) : null);
-        values.put("repeated_choice", recurringExpense.getRepeatedChoice());
+        values.put("repeated_choice", recurringExpense.getRepeatedChoice().toLowerCase());
         values.put("user_id", recurringExpense.getUserId());
 
-        db.insert("recurring_expenses", null, values);
+        long rowId = db.insert("recurring_expenses", null, values);
         db.close();
+
+        Log.d("RecurringExpense", "Inserted recurring expense rowId=" + rowId + ", userId=" + recurringExpense.getUserId());
     }
+
 
     public List<RecurringExpense> getRecurringExpenses(String userId) {
         List<RecurringExpense> recurringExpenses = new ArrayList<>();
@@ -95,6 +100,8 @@ public class RecurringExpense {
 
         String query = "SELECT * FROM recurring_expenses WHERE user_id = ?";
         Cursor cursor = db.rawQuery(query, new String[]{userId});
+        Log.d("RecurringExpense", "Query: " + query + ", User ID: " + userId); // Log Query và User ID
+
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 @SuppressLint("Range") int id = cursor.getInt(cursor.getColumnIndex("id"));
@@ -108,26 +115,47 @@ public class RecurringExpense {
 
                 RecurringExpense recurringExpense = new RecurringExpense(id, categoryId, amount, startDate, endDate, repeatedChoice, userIdFetched, context);
                 recurringExpenses.add(recurringExpense);
+                Log.d("RecurringExpense", "Retrieved Recurring Expense ID: " + id); // Log ID của mục RecurringExpense
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
+        if (cursor != null) {
+            cursor.close();
+        }
+
         db.close();
         return recurringExpenses;
     }
 
-    public int updateRecurringExpense(RecurringExpense recurringExpense) {
 
+    public int updateRecurringExpense(RecurringExpense recurringExpense) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("category_id", recurringExpense.getCategoryId());
         values.put("amount", recurringExpense.getAmount());
         values.put("start_date", recurringExpense.getStartDate().format(dateFormatter));
         values.put("end_date", recurringExpense.getEndDate() != null ? recurringExpense.getEndDate().format(dateFormatter) : null);
-        values.put("repeated_choice", recurringExpense.getRepeatedChoice());
+        values.put("repeated_choice", recurringExpense.getRepeatedChoice().toLowerCase());
+        values.put("user_id", recurringExpense.getUserId());
+
+        // Log chi tiết trước khi thực hiện update
+        Log.d("RecurringExpense", "Updating recurring expense ID: " + recurringExpense.getId() +
+                ", category_id: " + recurringExpense.getCategoryId() +
+                ", amount: " + recurringExpense.getAmount() +
+                ", start_date: " + recurringExpense.getStartDate() +
+                ", end_date: " + recurringExpense.getEndDate() +
+                ", repeated_choice: " + recurringExpense.getRepeatedChoice().toLowerCase() +
+                ", user_id: " + recurringExpense.getUserId());
+
+        // Kiểm tra null trước khi thực hiện update
+        if (recurringExpense.getCategoryId() == 0 || recurringExpense.getUserId() == null) {
+            Log.e("RecurringExpense", "Error: category_id or user_id is null for recurring expense ID: " + recurringExpense.getId());
+            return -1; // Trả về giá trị âm để chỉ ra lỗi
+        }
 
         return db.update("recurring_expenses", values, "id = ?", new String[]{String.valueOf(recurringExpense.getId())});
     }
+
 
     public void deleteRecurringExpense(int id) {
         SQLiteDatabase db = this.getWritableDatabase();

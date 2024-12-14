@@ -15,6 +15,7 @@ import com.example.campusstage2.Auth;
 import com.example.campusstage2.LoginActivity;
 import com.example.campusstage2.R;
 import com.example.campusstage2.RecurringExpenseActivity;
+//import com.example.campusstage2.TestActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +24,7 @@ import com.example.campusstage2.RecurringExpenseActivity;
  */
 public class AccountFragment extends Fragment {
 
-    private Button logoutButton, recurringExpenseButton;
+    private Button logoutButton, recurringExpenseButton, testbtn;
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private TextView nameTextView, usernameTextView, emailTextView, phoneTextView;
@@ -75,6 +76,7 @@ public class AccountFragment extends Fragment {
 
         logoutButton = view.findViewById(R.id.logoutButton);
         recurringExpenseButton = view.findViewById(R.id.recurringExpenseButton);
+//        testbtn = view.findViewById(R.id.testbtn);
         nameTextView = view.findViewById(R.id.userNameTextView);
         usernameTextView = view.findViewById(R.id.userUsernameTextView);
         emailTextView = view.findViewById(R.id.userEmailTextView);
@@ -101,7 +103,14 @@ public class AccountFragment extends Fragment {
                 startActivity(intent); // Navigate to RecurringExpensesActivity
             }
         });
-
+//        testbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // Từ một Activity khác
+//                Intent intent = new Intent(getActivity(), TestActivity.class);
+//                startActivity(intent);
+//            }
+//        });
         return view;
     }
     private void setUserInfo() {

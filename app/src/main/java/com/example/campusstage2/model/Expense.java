@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.campusstage2.DatabaseHelper;
 
@@ -45,10 +46,13 @@ public class Expense {
         values.put("user_id", userId);
         values.put("date", date);
         values.put("note", note);
-        db.insert("expense", null, values);
-//        long expenseId = db.insert("expense", null, values);
-//        updateBudgetRemaining(amount, categoryId, userId,date);
+
+        long expenseId = db.insert("expense", null, values); // Chỉ gọi insert một lần
+        updateBudgetRemaining(amount, categoryId, userId, date);
+        Log.d("Expense", "Inserted expense rowId=" + expenseId + ", amount=" + amount + ", categoryId=" + categoryId + ", userId=" + userId + ", date=" + date);
+        db.close(); // Đóng cơ sở dữ liệu sau khi thêm
     }
+
 
 
     public void deteleExpense(int expenseId) {
@@ -59,7 +63,7 @@ public class Expense {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Find the budget ID associated with the category and user (assuming such a relationship exists)
-        String query = "SELECT id, remaining FROM budget WHERE category_id = ? AND user_id = ?" +
+        String query = "SELECT id, remaining FROM budgets WHERE category_id = ? AND user_id = ?" +
                 "AND (start_date <= ? AND end_date >= ?)";
         Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(categoryId), String.valueOf(userId),date,date});
 

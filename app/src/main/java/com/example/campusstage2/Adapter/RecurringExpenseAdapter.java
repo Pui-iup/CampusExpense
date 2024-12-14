@@ -54,7 +54,7 @@ public class RecurringExpenseAdapter extends RecyclerView.Adapter<RecurringExpen
         holder.amountTextView.setText("Amount: $"+ String.valueOf(expense.getAmount()));
         holder.startDateTextView.setText("StatDate: "+expense.getStartDate().format(dateFormatter));
         holder.endDateTextView.setText("EndDate: "+expense.getEndDate() != null ? expense.getEndDate().format(dateFormatter) : "N/A");
-        holder.repeatedChoiceTextView.setText("Repeated Choice: "+expense.getRepeatedChoice());
+        holder.repeatedChoiceTextView.setText("Repeated Choice: "+expense.getRepeatedChoice().toLowerCase());
 
         holder.editButton.setOnClickListener(v -> {
             int adapterPosition = holder.getAdapterPosition();
@@ -79,7 +79,7 @@ public class RecurringExpenseAdapter extends RecyclerView.Adapter<RecurringExpen
     private int getSpinnerIndex(Spinner spinner, String repeatedChoice) {
         ArrayAdapter<CharSequence> adapter = (ArrayAdapter<CharSequence>) spinner.getAdapter();
         for (int i = 0; i < adapter.getCount(); i++) {
-            if (adapter.getItem(i).equals(repeatedChoice)) {
+            if (adapter.getItem(i).equals(repeatedChoice.toLowerCase())) {
                 return i;
             }
         }
@@ -101,7 +101,7 @@ public class RecurringExpenseAdapter extends RecyclerView.Adapter<RecurringExpen
         editAmount.setText(String.valueOf(recurringExpense.getAmount()));
         editStartDate.setText(recurringExpense.getStartDate().format(dateFormatter));
         editEndDate.setText(recurringExpense.getEndDate() != null ? recurringExpense.getEndDate().format(dateFormatter) : "");
-        spinnerRepeatedChoice.setSelection(getSpinnerIndex(spinnerRepeatedChoice, recurringExpense.getRepeatedChoice()));
+        spinnerRepeatedChoice.setSelection(getSpinnerIndex(spinnerRepeatedChoice, recurringExpense.getRepeatedChoice().toLowerCase()));
         selectCategory.setText(databaseHelper.getCategoryNameById(recurringExpense.getCategoryId()));
 
         // Thiết lập sự kiện chọn ngày
@@ -128,7 +128,7 @@ public class RecurringExpenseAdapter extends RecyclerView.Adapter<RecurringExpen
             recurringExpense.setAmount(Double.parseDouble(editAmount.getText().toString()));
             recurringExpense.setStartDate(LocalDate.parse(editStartDate.getText().toString(), dateFormatter));
             recurringExpense.setEndDate(!editEndDate.getText().toString().isEmpty() ? LocalDate.parse(editEndDate.getText().toString(), dateFormatter) : null);
-            recurringExpense.setRepeatedChoice(spinnerRepeatedChoice.getSelectedItem().toString());
+            recurringExpense.setRepeatedChoice(spinnerRepeatedChoice.getSelectedItem().toString().toLowerCase());
 
             updateRecurringExpense(recurringExpense, position); // Cập nhật dữ liệu
         });

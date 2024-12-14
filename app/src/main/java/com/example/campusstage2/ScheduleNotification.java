@@ -13,6 +13,7 @@ public class ScheduleNotification extends Application {
         super.onCreate();
 
         scheduleMorningNotification();
+//        scheduleRecurringExpenseWorker();
     }
 
     private void scheduleMorningNotification() {
@@ -39,4 +40,14 @@ public class ScheduleNotification extends Application {
                 workRequest
         );
     }
+//    private void scheduleRecurringExpenseWorker() {
+//        PeriodicWorkRequest workRequest = new PeriodicWorkRequest.Builder(
+//                RecurringExpenseWorker.class,
+//                1, TimeUnit.DAYS
+//        ).build();
+//        WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+//                "recurring_expense_worker",
+//                ExistingPeriodicWorkPolicy.REPLACE, workRequest
+//        );
+//    }
 }
