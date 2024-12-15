@@ -25,8 +25,10 @@ import java.util.List;
 
 public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder> {
     private final List<Budget> budgets;
+    private final Context context;
 
-    public BudgetAdapter(List<Budget> budgets) {
+    public BudgetAdapter(Context context, List<Budget> budgets) {
+        this.context = context;
         this.budgets = budgets;
     }
 
@@ -41,20 +43,20 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
     public void onBindViewHolder(@NonNull BudgetViewHolder holder, int position) {
         Budget budget = budgets.get(position);
 
-        // Display current budget details
         holder.amountTextView.setText("Amount: $" + budget.getAmount());
         holder.remainingTextView.setText("Remaining: $" + budget.getRemaining());
         holder.categoryTextView.setText("Category: " + budget.getCategoryName());
         holder.startDateTextView.setText("Start Date: " + budget.getStartDate());
         holder.endDateTextView.setText("End Date: " + budget.getEndDate());
+
         holder.deleteBudget.setOnClickListener(view -> {
-            Budget deletedBudget = new Budget(view.getContext());
+            Budget deletedBudget = new Budget(context);
             deletedBudget.deleteBudget(budget.getId());
             budgets.remove(position);
             notifyItemRemoved(position);
-            Toast.makeText(view.getContext(), "Budget deleted", Toast.LENGTH_SHORT).show();
-
+            Toast.makeText(context, "Budget deleted", Toast.LENGTH_SHORT).show();
         });
+
         holder.itemView.setOnClickListener(view -> {
             View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.activity_add_budget, null);
 
@@ -63,24 +65,22 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                     .setPositiveButton("Update", null)
                     .setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss())
                     .create();
-            TextView textViewAddBudget  = dialogView.findViewById(R.id.textViewAddBudget);
+
+            TextView textViewAddBudget = dialogView.findViewById(R.id.textViewAddBudget);
             textViewAddBudget.setText("Update Budget");
-            Button saveBudget =   dialogView.findViewById(R.id.saveBudget);
+            Button saveBudget = dialogView.findViewById(R.id.saveBudget);
             saveBudget.setVisibility(View.INVISIBLE);
 
-            // Get references to dialog views
             EditText amountEditText = dialogView.findViewById(R.id.amount);
             EditText startDateEditText = dialogView.findViewById(R.id.startDate);
             EditText endDateEditText = dialogView.findViewById(R.id.endDate);
             TextView selectCategoryTextView = dialogView.findViewById(R.id.selectCategory);
 
-            // Populate dialog fields with existing data
             amountEditText.setText(String.valueOf(budget.getAmount()));
             startDateEditText.setText(budget.getStartDate());
             endDateEditText.setText(budget.getEndDate());
             selectCategoryTextView.setText(budget.getCategoryName());
 
-            // Set up category selection
             selectCategoryTextView.setOnClickListener(v -> {
                 Category category = new Category(view.getContext());
                 List<Category> categories = category.getAllCategories();
@@ -104,7 +104,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                 categoryDialog.show();
             });
 
-            // Set up date pickers for Start Date and End Date
             startDateEditText.setOnTouchListener((v, event) -> {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     showDatePickerDialog(view.getContext(), startDateEditText);
@@ -119,7 +118,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                 return true;
             });
 
-            // Set up Update button click listener
             dialog.setOnShowListener(dialogInterface -> {
                 Button updateButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
                 updateButton.setOnClickListener(v -> {
@@ -128,21 +126,16 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
                     String updatedEndDate = endDateEditText.getText().toString();
                     String updatedCategory = selectCategoryTextView.getText().toString();
 
-                    // Validate inputs
                     if (updatedAmount.isEmpty() || updatedStartDate.isEmpty() || updatedEndDate.isEmpty() || updatedCategory.isEmpty()) {
                         Toast.makeText(view.getContext(), "Please fill in all fields.", Toast.LENGTH_SHORT).show();
                         return;
                     }
 
-                    // Update budget
-//                    int updatedRemaining = calculateRemaining(budget);
                     budget.setAmount(Integer.parseInt(updatedAmount));
-//                    budget.setRemaining(updatedRemaining);
                     budget.setStartDate(updatedStartDate);
                     budget.setEndDate(updatedEndDate);
                     budget.setCategoryName(updatedCategory);
 
-                    // Update data source and notify adapter
                     budgets.set(position, budget);
                     notifyItemChanged(position);
 
@@ -155,7 +148,6 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         });
     }
 
-    // Helper function to show a date picker dialog
     private void showDatePickerDialog(Context context, EditText targetEditText) {
         final Calendar calendar = Calendar.getInstance();
         int year = calendar.get(Calendar.YEAR);
@@ -169,10 +161,15 @@ public class BudgetAdapter extends RecyclerView.Adapter<BudgetAdapter.BudgetView
         datePickerDialog.show();
     }
 
-
     @Override
     public int getItemCount() {
         return budgets.size();
+    }
+
+    public void updateData(List<Budget> newBudgets) {
+        this.budgets.clear();
+        this.budgets.addAll(newBudgets);
+        notifyDataSetChanged();
     }
 
     static class BudgetViewHolder extends RecyclerView.ViewHolder {

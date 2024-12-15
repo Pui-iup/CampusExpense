@@ -16,7 +16,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.campusstage2.R;
-import com.example.campusstage2.model.Budget;
 import com.example.campusstage2.model.Category;
 import com.example.campusstage2.model.Expense;
 
@@ -25,9 +24,11 @@ import java.util.List;
 
 public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseViewHolder> {
     private final List<Expense> expenses;
+
     public ExpenseAdapter(List<Expense> expenses) {
         this.expenses = expenses;
     }
+
     @NonNull
     @Override
     public ExpenseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -42,13 +43,14 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
         holder.amountTextView.setText("Amount: $" + expense.getAmount());
         holder.categoryTextView.setText("Category: " + expense.getCategoryName());
         holder.dateTextView.setText("Date: " + expense.getDate());
-        holder.deteleExpense.setOnClickListener(view -> {
-            Expense deteleExpense = new Expense(view.getContext());
-            deteleExpense.deteleExpense(expense.getId());
+        holder.deleteExpense.setOnClickListener(view -> {
+            Expense deleteExpense = new Expense(view.getContext());
+            deleteExpense.deleteExpense(expense.getId());
             expenses.remove(position);
             notifyItemRemoved(position);
             Toast.makeText(view.getContext(), "Expense deleted", Toast.LENGTH_SHORT).show();
         });
+
         holder.itemView.setOnClickListener(view -> {
             View dialogView = LayoutInflater.from(view.getContext()).inflate(R.layout.fragment_add, null);
             AlertDialog dialog = new AlertDialog.Builder(view.getContext())
@@ -62,6 +64,7 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
             EditText noteInput = dialogView.findViewById(R.id.noteInput);
             EditText dateInput = dialogView.findViewById(R.id.dateInput);
             TextView selectCategory = dialogView.findViewById(R.id.selectCategory);
+
             // Điền dữ liệu hiện tại
             TextView textView = dialogView.findViewById(R.id.textViewExpense);
             textView.setText("Update an Expense");
@@ -124,15 +127,10 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
                     String newAmount = amountInput.getText().toString().trim();
                     String newNote = noteInput.getText().toString().trim();
 
-                    Expense newExpense = new Expense(view.getContext());
-                    newExpense.setId(expense.getId());
-                    newExpense.setCategoryId(expense.getCategoryId());
-                    newExpense.setDate(expense.getDate());
-                    newExpense.setAmount(Integer.parseInt(newAmount));
-                    newExpense.setNote(newNote);
-                    newExpense.setCategoryName(expense.getCategoryName());
-                    newExpense.updateExpense();
-                    expenses.set(position, newExpense);
+                    expense.setAmount(Integer.parseInt(newAmount));
+                    expense.setNote(newNote);
+                    expense.updateExpense();
+                    expenses.set(position, expense);
                     notifyItemChanged(position);
                     dialog.dismiss();
                 });
@@ -146,13 +144,15 @@ public class ExpenseAdapter extends RecyclerView.Adapter<ExpenseAdapter.ExpenseV
     public int getItemCount() {
         return expenses.size();
     }
+
     static class ExpenseViewHolder extends RecyclerView.ViewHolder {
-        TextView amountTextView,categoryTextView, dateTextView;
-        Button deteleExpense;
+        TextView amountTextView, categoryTextView, dateTextView;
+        Button deleteExpense;
+
         public ExpenseViewHolder(@NonNull View itemView) {
             super(itemView);
             amountTextView = itemView.findViewById(R.id.amountTextView);
-            deteleExpense = itemView.findViewById(R.id.deleteExpense);
+            deleteExpense = itemView.findViewById(R.id.deleteExpense);
             categoryTextView = itemView.findViewById(R.id.categoryTextView);
             dateTextView = itemView.findViewById(R.id.dateTextView);
         }

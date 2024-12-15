@@ -12,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.campusstage2.Adapter.BudgetAdapter;
 import com.example.campusstage2.Adapter.ExpenseAdapter;
 import com.example.campusstage2.DatabaseHelper;
 import com.example.campusstage2.R;
-import com.example.campusstage2.model.Budget;
+import com.example.campusstage2.Auth;
 import com.example.campusstage2.model.Expense;
 
 import java.util.ArrayList;
@@ -28,15 +27,14 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class TransactionFragment extends Fragment {
+    private RecyclerView expenseRecyclerView;
+    private Auth auth;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private RecyclerView expenseRecyclerView;
 
-
-    // TODO: Rename and change types of parameters
+    // Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -44,15 +42,6 @@ public class TransactionFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment TransactionFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static TransactionFragment newInstance(String param1, String param2) {
         TransactionFragment fragment = new TransactionFragment();
         Bundle args = new Bundle();
@@ -69,13 +58,13 @@ public class TransactionFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+        auth = new Auth(getContext()); // Initialize auth
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_transaction, container, false);
+        View view = inflater.inflate(R.layout.fragment_transaction, container, false);
         expenseRecyclerView = view.findViewById(R.id.expenseRecyclerView);
         expenseRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         List<Expense> expenses = loadExpenses();
@@ -83,25 +72,28 @@ public class TransactionFragment extends Fragment {
         expenseRecyclerView.setAdapter(adapter);
         return view;
     }
+
     private List<Expense> loadExpenses() {
         List<Expense> expenses = new ArrayList<>();
         SQLiteDatabase db = new DatabaseHelper(getContext()).getReadableDatabase();
-        String query = "SELECT e.id, e.amount, " +
-                "e.category_id, e.user_id, e.date, c.name AS category_name " +
+        int userId = auth.getUserId(); // Get the user ID of the current user
+        String query = "SELECT e.id, e.amount, e.category_id, e.user_id, e.date, c.name AS category_name " +
                 "FROM expense e " +
-                "LEFT JOIN categories c ON e.category_id = c.id";
-        Cursor cursor = db.rawQuery(query, null);
+                "LEFT JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.user_id = ?"; // Filter by user_id
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         if (cursor.moveToFirst()) {
             do {
                 Integer id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
                 int amount = cursor.getInt(cursor.getColumnIndexOrThrow("amount"));
                 Integer categoryId = cursor.getInt(cursor.getColumnIndexOrThrow("category_id"));
-                Integer userId = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                Integer userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
                 String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
                 String categoryName = cursor.getString(cursor.getColumnIndexOrThrow("category_name"));
 
-                Expense expense = new Expense(id,amount,categoryId,userId,date);
+                Expense expense = new Expense(id, amount, categoryId, userIdFromCursor, date);
                 expense.setCategoryName(categoryName);
                 expenses.add(expense);
             } while (cursor.moveToNext());

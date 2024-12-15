@@ -7,19 +7,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-
-import androidx.work.Data;
-import androidx.work.OneTimeWorkRequest;
-import androidx.work.WorkManager;
-
 import com.example.campusstage2.DatabaseHelper;
-//import com.example.campusstage2.RecurringExpenseWorker;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class RecurringExpense {
     private int id;
@@ -93,14 +86,13 @@ public class RecurringExpense {
         Log.d("RecurringExpense", "Inserted recurring expense rowId=" + rowId + ", userId=" + recurringExpense.getUserId());
     }
 
-
     public List<RecurringExpense> getRecurringExpenses(String userId) {
         List<RecurringExpense> recurringExpenses = new ArrayList<>();
         SQLiteDatabase db = this.getReadableDatabase();
 
         String query = "SELECT * FROM recurring_expenses WHERE user_id = ?";
         Cursor cursor = db.rawQuery(query, new String[]{userId});
-        Log.d("RecurringExpense", "Query: " + query + ", User ID: " + userId); // Log Query và User ID
+        Log.d("RecurringExpense", "Query: " + query + ", User ID: " + userId);
 
         if (cursor != null && cursor.moveToFirst()) {
             do {
@@ -115,7 +107,7 @@ public class RecurringExpense {
 
                 RecurringExpense recurringExpense = new RecurringExpense(id, categoryId, amount, startDate, endDate, repeatedChoice, userIdFetched, context);
                 recurringExpenses.add(recurringExpense);
-                Log.d("RecurringExpense", "Retrieved Recurring Expense ID: " + id); // Log ID của mục RecurringExpense
+                Log.d("RecurringExpense", "Retrieved Recurring Expense ID: " + id);
             } while (cursor.moveToNext());
         }
 
@@ -127,7 +119,6 @@ public class RecurringExpense {
         return recurringExpenses;
     }
 
-
     public int updateRecurringExpense(RecurringExpense recurringExpense) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -138,7 +129,6 @@ public class RecurringExpense {
         values.put("repeated_choice", recurringExpense.getRepeatedChoice().toLowerCase());
         values.put("user_id", recurringExpense.getUserId());
 
-        // Log chi tiết trước khi thực hiện update
         Log.d("RecurringExpense", "Updating recurring expense ID: " + recurringExpense.getId() +
                 ", category_id: " + recurringExpense.getCategoryId() +
                 ", amount: " + recurringExpense.getAmount() +
@@ -147,38 +137,19 @@ public class RecurringExpense {
                 ", repeated_choice: " + recurringExpense.getRepeatedChoice().toLowerCase() +
                 ", user_id: " + recurringExpense.getUserId());
 
-        // Kiểm tra null trước khi thực hiện update
         if (recurringExpense.getCategoryId() == 0 || recurringExpense.getUserId() == null) {
             Log.e("RecurringExpense", "Error: category_id or user_id is null for recurring expense ID: " + recurringExpense.getId());
-            return -1; // Trả về giá trị âm để chỉ ra lỗi
+            return -1;
         }
 
         return db.update("recurring_expenses", values, "id = ?", new String[]{String.valueOf(recurringExpense.getId())});
     }
-
 
     public void deleteRecurringExpense(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete("recurring_expenses", "id = ?", new String[]{String.valueOf(id)});
         db.close();
     }
-
-    /**
-     * Schedules recurring expenses using WorkManager.
-     */
-//    public void scheduleRecurringExpenses(Context context) {
-//        WorkManager workManager = WorkManager.getInstance(context);
-//        Data inputData = new Data.Builder()
-//                .putString("user_id", userId)
-//                .build();
-//
-//        OneTimeWorkRequest workRequest = new OneTimeWorkRequest.Builder(RecurringExpenseWorker.class)
-//                .setInputData(inputData)
-//                .setInitialDelay(1, TimeUnit.MINUTES)  // Set initial delay
-//                .build();
-//
-//        workManager.enqueue(workRequest);
-//    }
 
     // Getters and Setters
     public int getId() {

@@ -8,7 +8,9 @@ import android.util.Log;
 
 import com.example.campusstage2.DatabaseHelper;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Expense {
@@ -20,8 +22,19 @@ public class Expense {
     private String date;
     private String note;
     private String categoryName;
-    private Category category;
-    private Context context;
+
+    public Expense(Context context) {
+        dbHelper = new DatabaseHelper(context);
+    }
+
+    public Expense(Integer id, int amount, Integer categoryId, Integer userId, String date) {
+        this.id = id;
+        this.amount = amount;
+        this.categoryId = categoryId;
+        this.userId = userId;
+        this.date = date;
+    }
+
     public String getCategoryName() {
         return categoryName;
     }
@@ -29,16 +42,8 @@ public class Expense {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
-    public Expense(Integer id, int amount, Integer categoryId, Integer userId, String date) {
-        this.setId(id);
-        this.setAmount(amount);
-        this.setCategoryId(categoryId);
-        this.setUserId(userId);
-        this.setDate(date);
-    }
 
-    public void insertExpense(int amount, Integer categoryId, Integer userId,
-                              String date, String note) {
+    public void insertExpense(int amount, Integer categoryId, Integer userId, String date, String note) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put("amount", amount);
@@ -53,34 +58,58 @@ public class Expense {
         db.close(); // Đóng cơ sở dữ liệu sau khi thêm
     }
 
-
-
-    public void deteleExpense(int expenseId) {
+    public void deleteExpense(int expenseId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete("expense", "id = ?", new String[]{String.valueOf(expenseId)});
+        db.close();
     }
+
     private void updateBudgetRemaining(int expenseAmount, Integer categoryId, Integer userId, String date) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-
-        // Find the budget ID associated with the category and user (assuming such a relationship exists)
-        String query = "SELECT id, remaining FROM budgets WHERE category_id = ? AND user_id = ?" +
-                "AND (start_date <= ? AND end_date >= ?)";
-        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(categoryId), String.valueOf(userId),date,date});
+        String query = "SELECT id, remaining FROM budgets WHERE category_id = ? AND user_id = ? AND (start_date <= ? AND end_date >= ?)";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(categoryId), String.valueOf(userId), date, date});
 
         if (cursor != null && cursor.moveToFirst()) {
             int budgetId = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
             int currentRemaining = cursor.getInt(cursor.getColumnIndexOrThrow("remaining"));
-            // Subtract the expense amount from the remaining budget
             int updatedRemaining = currentRemaining - expenseAmount;
             ContentValues updateValues = new ContentValues();
             updateValues.put("remaining", updatedRemaining);
-
-            db.update("budget", updateValues, "id = ?", new String[]{String.valueOf(budgetId)});
+            db.update("budgets", updateValues, "id = ?", new String[]{String.valueOf(budgetId)});
         }
 
         if (cursor != null) {
             cursor.close();
         }
+        db.close();
+    }
+
+    public List<Expense> getExpensesByUserId(int userId) {
+        List<Expense> expenses = new ArrayList<>();
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT e.id, e.amount, e.category_id, e.user_id, e.date, e.note, c.name AS category_name " +
+                "FROM expense e LEFT JOIN categories c ON e.category_id = c.id " +
+                "WHERE e.user_id = ?", new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                int id = cursor.getInt(cursor.getColumnIndexOrThrow("id"));
+                int amount = cursor.getInt(cursor.getColumnIndexOrThrow("amount"));
+                int categoryId = cursor.getInt(cursor.getColumnIndexOrThrow("category_id"));
+                int userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                String note = cursor.getString(cursor.getColumnIndexOrThrow("note"));
+                String categoryName = cursor.getString(cursor.getColumnIndexOrThrow("category_name"));
+
+                Expense expense = new Expense(id, amount, categoryId, userIdFromCursor, date);
+                expense.setNote(note); // Set note
+                expense.setCategoryName(categoryName); // Set category name
+                expenses.add(expense); // Add expense to the list
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close(); // Always close the cursor to avoid memory leaks
+        db.close(); // Close the database connection
+        return expenses; // Return the list of expenses
     }
 
     public void updateExpense() {
@@ -94,11 +123,24 @@ public class Expense {
         db.close();
     }
 
-
-    public Expense(Context context) {
-        dbHelper = new DatabaseHelper(context);
+    public Map<String, Integer> getSumAmountByDay(int userId) {
+        Map<String, Integer> result = new LinkedHashMap<>();
+        SQLiteDatabase db = this.dbHelper.getReadableDatabase();
+        String query = "SELECT date, SUM(amount) as total FROM expense WHERE user_id = ? GROUP BY date ORDER BY date";
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+        if (cursor.moveToFirst()) {
+            do {
+                String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
+                int total = cursor.getInt(cursor.getColumnIndexOrThrow("total"));
+                result.put(date, total);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return result;
     }
 
+    // Getters and Setters
     public Integer getId() {
         return id;
     }
@@ -145,22 +187,5 @@ public class Expense {
 
     public void setNote(String note) {
         this.note = note;
-    }
-
-// get by user id & current month
-    public Map<String, Integer> getSumAmountByDay() {
-        Map<String, Integer> result = new LinkedHashMap<>();
-        SQLiteDatabase db = this.dbHelper.getReadableDatabase();
-        String query = "SELECT date, SUM(amount) as total FROM expense GROUP BY date ORDER BY date";
-        Cursor cursor = db.rawQuery(query, null);
-        if (cursor.moveToFirst()) {
-            do {
-                String date = cursor.getString(cursor.getColumnIndexOrThrow("date"));
-                int total = cursor.getInt(cursor.getColumnIndexOrThrow("total"));
-                result.put(date, total);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        return result;
     }
 }

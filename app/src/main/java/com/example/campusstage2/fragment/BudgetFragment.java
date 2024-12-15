@@ -19,6 +19,7 @@ import com.example.campusstage2.AddBudgetActivity;
 import com.example.campusstage2.DatabaseHelper;
 import com.example.campusstage2.R;
 import com.example.campusstage2.model.Budget;
+import com.example.campusstage2.Auth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,14 +30,14 @@ import java.util.List;
  * create an instance of this fragment.
  */
 public class BudgetFragment extends Fragment {
+    private RecyclerView budgetRecyclerView;
+    private Auth auth;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+    // Rename parameter arguments, choose names that match
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private RecyclerView budgetRecyclerView;
 
-    // TODO: Rename and change types of parameters
+    // Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
@@ -44,15 +45,6 @@ public class BudgetFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment BudgetFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static BudgetFragment newInstance(String param1, String param2) {
         BudgetFragment fragment = new BudgetFragment();
         Bundle args = new Bundle();
@@ -76,30 +68,35 @@ public class BudgetFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_budget, container, false);
+        auth = new Auth(getContext()); // Initialize auth
+
         Button addBudgetButton = view.findViewById(R.id.addBudgetButton);
-        addBudgetButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), AddBudgetActivity.class);
-                view.getContext().startActivity(intent);
-            }
+        addBudgetButton.setOnClickListener(view1 -> {
+            Intent intent = new Intent(view1.getContext(), AddBudgetActivity.class);
+            view1.getContext().startActivity(intent);
         });
+
         budgetRecyclerView = view.findViewById(R.id.budgetRecyclerView);
         budgetRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         List<Budget> budgets = loadBudgets();
-        BudgetAdapter adapter = new BudgetAdapter(budgets);
+        BudgetAdapter adapter = new BudgetAdapter(getContext(), budgets); // Pass context and data to the adapter
         budgetRecyclerView.setAdapter(adapter);
+
         return view;
     }
+
     private List<Budget> loadBudgets() {
         List<Budget> budgets = new ArrayList<>();
         SQLiteDatabase db = new DatabaseHelper(getContext()).getReadableDatabase();
+        int userId = auth.getUserId(); // Get the user ID of the current user
         String query = "SELECT b.id, b.amount, b.remaining, " +
                 "b.category_id, b.user_id, b.start_date, b.end_date, c.name AS category_name " +
                 "FROM budgets b " +
-                "LEFT JOIN categories c ON b.category_id = c.id";
-        Cursor cursor = db.rawQuery(query, null);
+                "LEFT JOIN categories c ON b.category_id = c.id " +
+                "WHERE b.user_id = ?"; // Filter by user_id
+
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
 
         if (cursor.moveToFirst()) {
             do {
@@ -107,12 +104,12 @@ public class BudgetFragment extends Fragment {
                 int amount = cursor.getInt(cursor.getColumnIndexOrThrow("amount"));
                 int remaining = cursor.getInt(cursor.getColumnIndexOrThrow("remaining"));
                 Integer categoryId = cursor.getInt(cursor.getColumnIndexOrThrow("category_id"));
-                Integer userId = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
+                Integer userIdFromCursor = cursor.getInt(cursor.getColumnIndexOrThrow("user_id"));
                 String startDate = cursor.getString(cursor.getColumnIndexOrThrow("start_date"));
                 String endDate = cursor.getString(cursor.getColumnIndexOrThrow("end_date"));
                 String categoryName = cursor.getString(cursor.getColumnIndexOrThrow("category_name"));
 
-                Budget budget = new Budget(id, amount, categoryId, userId, startDate, endDate);
+                Budget budget = new Budget(id, amount, categoryId, userIdFromCursor, startDate, endDate);
                 budget.setCategoryName(categoryName);
                 budget.setRemaining(remaining);
                 budgets.add(budget);
@@ -123,5 +120,4 @@ public class BudgetFragment extends Fragment {
         db.close();
         return budgets;
     }
-
 }
